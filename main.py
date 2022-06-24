@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
 
-from blog.router import router
+from app.router import router
 
 HOST = "localhost"
 PORT = 8069

@@ -11,3 +11,6 @@ SQLAlchemy==1.4.37
 starlette==0.19.1
 typing-extensions==4.2.0
 uvicorn==0.17.6
+
+slugify~=0.0.1
+alembic~=1.8.0

@@ -33,14 +33,14 @@ POST = [
 
 
 @post_router.get('/post', status_code=200, response_model=PostsResponse)
-def get_posts():
+async def get_posts():
     return {
         "results": POST
     }
 
 
 @post_router.get('/post/{id}', status_code=200, response_model=PostResponse)
-def get_post(id: int):
+async def get_post(id: int):
     post = list(filter(lambda post: post.get('id') == id, POST))
 
     if not post:
@@ -52,7 +52,7 @@ def get_post(id: int):
 
 
 @post_router.post('/post', status_code=201, response_model=PostResponse)
-def create_post(request: PostRequest):
+async def create_post(request: PostRequest):
     post = {
         'id': POST[-1].get('id') + 1 if len(POST) else 1,
         **request.dict()
@@ -63,7 +63,7 @@ def create_post(request: PostRequest):
 
 
 @post_router.put('/post/{id}', status_code=201, response_model=PostResponse)
-def update_post(id: int, request: PostRequest):
+async def update_post(id: int, request: PostRequest):
     post = list(filter(lambda post: post.get('id') == id, POST))
 
     if not post:
@@ -79,7 +79,7 @@ def update_post(id: int, request: PostRequest):
 
 
 @post_router.delete('/post/{id}', status_code=200)
-def update_post(id: int):
+async def update_post(id: int):
     for i, post in enumerate(POST):
         if post['id'] == id:
             return POST.pop(i)
