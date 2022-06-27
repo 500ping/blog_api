@@ -2,6 +2,7 @@ from app.db.base_class import Base
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+from typing import TYPE_CHECKING
 
 
 class User(Base):

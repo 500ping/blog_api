@@ -1,11 +1,12 @@
 from app.db.base_class import Base
+from app.model.post_tags import PostTag
 
 from sqlalchemy import (
     Column, DateTime, String, Integer, ForeignKey, Text, Boolean, event
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
-
+from typing import TYPE_CHECKING
 from slugify import slugify
 
 
@@ -23,7 +24,8 @@ class Post(Base):
     created_by = Column(Integer, ForeignKey("user.id"))
     owner = relationship('User', back_populates="posts")
 
-    tags = relationship('Tag', secondary='post_tags', back_populates='posts')
+    # tags = relationship('Tag', secondary='post_tags', back_populates='posts')
+    tags = relationship('Tag', secondary=PostTag.__table__, back_populates='posts')
 
     @staticmethod
     def generate_slug(target, value, oldvalue, initiator):
