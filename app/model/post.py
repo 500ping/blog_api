@@ -6,7 +6,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
-from typing import TYPE_CHECKING
 from slugify import slugify
 
 

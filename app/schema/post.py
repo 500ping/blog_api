@@ -1,6 +1,8 @@
-from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional, Sequence
+from typing import List, Optional
+
+from .tag import Tag
+from .user import User
 
 
 class PostBase(BaseModel):
@@ -12,15 +14,22 @@ class PostBase(BaseModel):
     is_publish: bool
 
 
-class PostRequest(PostBase):
+class PostCreate(PostBase):
+    tags: List[int]
+
+
+class PostUpdate(PostBase):
+    tags: List[int]
+
+
+class PostInDBBase(PostBase):
+    id: Optional[int] = None
+    owner: User
+    tags: List[Tag]
+
+    class Config:
+        orm_mode = True
+
+
+class Post(PostInDBBase):
     ...
-
-
-class PostResponse(PostBase):
-    id: int
-    title: str
-    content: str
-
-
-class PostsResponse(BaseModel):
-    results: Sequence[PostResponse]
