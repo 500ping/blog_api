@@ -24,7 +24,6 @@ class Post(Base):
     created_by = Column(Integer, ForeignKey("user.id"))
     owner = relationship('User', back_populates="posts")
 
-    # tags = relationship('Tag', secondary='post_tags', back_populates='posts')
     tags = relationship('Tag', secondary=PostTag.__table__, back_populates='posts')
 
     @staticmethod

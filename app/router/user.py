@@ -11,10 +11,10 @@ from app.crud import (
     crud_user
 )
 
-user_router = APIRouter()
+user_router = APIRouter(prefix="/user")
 
 
-@user_router.post('/user', status_code=201, response_model=User)
+@user_router.post('/', status_code=201, response_model=User)
 async def create_user(
     *,
     db: Session = Depends(deps.get_db),
