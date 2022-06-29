@@ -9,6 +9,7 @@ from app.schema.post import (
 )
 from app.crud.base import CRUDBase
 from app.crud import crud_tag
+from app.crud import crud_post_tags
 
 
 class CRUDPost(CRUDBase[Post, PostCreate, PostUpdate]):
@@ -19,16 +20,24 @@ class CRUDPost(CRUDBase[Post, PostCreate, PostUpdate]):
         return db.query(Post).filter(Post.title == title).first()
 
     def create(
-        self, db: Session, *, obj_in: PostCreate, created_by
+        self, 
+        db: Session, 
+        *, 
+        obj_in: PostCreate, 
+        # created_by,
     ) -> Post:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data, created_by=created_by)
+        tag_ids = obj_in_data.pop('tag_ids', []) # Get tag_ids
 
-        tags = crud_tag.tag.get_tags_by_ids(db, tag_ids=db_obj.tags)
-
+        db_obj = self.model(**obj_in_data)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
+
+        # Handle tags
+        for tag_id in tag_ids:
+            crud_post_tags.post_tag.create(db, db_obj.id, tag_id)
+
         return db_obj
 
 post = CRUDPost(Post)

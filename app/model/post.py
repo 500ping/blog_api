@@ -1,10 +1,12 @@
 from app.db.base_class import Base
 from app.model.post_tags import PostTag
+from app.model.tag import Tag
 
 from sqlalchemy import (
     Column, DateTime, String, Integer, ForeignKey, Text, Boolean, event
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship, Session
 from sqlalchemy import func
 from slugify import slugify
 
@@ -24,6 +26,7 @@ class Post(Base):
     owner = relationship('User', back_populates="posts")
 
     tags = relationship('Tag', secondary=PostTag.__table__, back_populates='posts')
+    tag_ids = association_proxy("tags", "id")
 
     @staticmethod
     def generate_slug(target, value, oldvalue, initiator):

@@ -8,7 +8,11 @@ from ..schema.post import (
     Post
 )
 from app.router import deps
-from app.crud import crud_post, crud_user
+from app.crud import (
+    crud_post, 
+    crud_user,
+    crud_tag,
+)
 
 post_router = APIRouter(prefix="/post")
 
@@ -57,8 +61,7 @@ async def create_post(
             detail="The post with this title already exists in the system.",
         )
 
-    user = crud_user.user.get(db, id=1)
-    post = crud_post.post.create(db, obj_in=post_in, created_by=user.id)
+    post = crud_post.post.create(db, obj_in=post_in)
     return post
 
 

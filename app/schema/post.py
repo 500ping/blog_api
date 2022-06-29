@@ -15,7 +15,9 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    tags: List[int]
+    created_by: int
+    tag_ids: List[int]
+    # tags: List[int]
 
 
 class PostUpdate(PostBase):
