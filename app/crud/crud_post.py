@@ -19,6 +19,12 @@ class CRUDPost(CRUDBase[Post, PostCreate, PostUpdate]):
     def get_by_title(self, db: Session, *, title: str) -> Optional[Post]:
         return db.query(Post).filter(Post.title == title).first()
 
+    def _handle_tags(self, db, post_id, tag_ids, is_create=True):
+        if not is_create:
+            crud_post_tags.post_tag.delete_post_tags(db, post_id=post_id)
+        for tag_id in tag_ids:
+            crud_post_tags.post_tag.create(db, post_id, tag_id)
+
     def create(
         self, 
         db: Session, 
@@ -33,11 +39,36 @@ class CRUDPost(CRUDBase[Post, PostCreate, PostUpdate]):
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
+        
+        self._handle_tags(db, db_obj.id, tag_ids)
 
-        # Handle tags
-        for tag_id in tag_ids:
-            crud_post_tags.post_tag.create(db, db_obj.id, tag_id)
+        return db_obj
 
+    def update(
+        self,
+        db: Session,
+        *,
+        db_obj: Post,
+        obj_in: PostUpdate
+    ) -> Post:
+        obj_data = jsonable_encoder(db_obj)
+
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+
+            tag_ids = update_data.pop('tag_ids', False) # Get tag_ids
+            if tag_ids: 
+                self._handle_tags(db, db_obj.id, tag_ids, is_create=False)
+
+        for field, value in obj_data.items():
+            if field in update_data and value != update_data[field]:
+                setattr(db_obj, field, update_data[field])
+                
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
         return db_obj
 
 post = CRUDPost(Post)

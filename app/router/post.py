@@ -65,20 +65,26 @@ async def create_post(
     return post
 
 
-# @post_router.put('/post/{id}', status_code=201, response_model=PostResponse)
-# async def update_post(id: int, request: PostRequest):
-#     post = list(filter(lambda post: post.get('id') == id, POST))
+@post_router.put('/post/{post_id}', status_code=200, response_model=Post)
+async def update_post(
+    *,
+    db: Session = Depends(deps.get_db),
+    post_id,
+    post_in: PostUpdate,
+    ) -> Any:
 
-#     if not post:
-#         raise HTTPException(
-#             status_code=404, detail=f"Post {id} not found"
-#         )
+    post = crud_post.post.get(db, post_id)
 
-#     post[0]["title"] = request.title
-#     post[0]["content"] = request.content
-#     print(POST)
+    if not post:
+        raise HTTPException(
+            status_code=400,
+            detail=f"The post with id {post_id} does not exists in the system.",
+        )
+    
+    post = crud_post.post.update(db, db_obj=post, obj_in=post_in)
+    return post
 
-#     return post[0]
+    
 
 
 # @post_router.delete('/post/{id}', status_code=200)

@@ -21,7 +21,7 @@ class PostCreate(PostBase):
 
 
 class PostUpdate(PostBase):
-    tags: List[int]
+    tag_ids: List[int]
 
 
 class PostInDBBase(PostBase):
