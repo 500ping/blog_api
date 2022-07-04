@@ -5,6 +5,6 @@ from sqlalchemy import Column, ForeignKey, Integer
 
 class PostTag(Base):
     id = Column(Integer, primary_key=True)
-    post_id = Column(Integer, ForeignKey('post.id'))
+    post_id = Column(Integer, ForeignKey('post.id', ondelete='CASCADE'))
     tag_id = Column(Integer, ForeignKey('tag.id'))
     

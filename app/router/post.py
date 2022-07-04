@@ -84,6 +84,24 @@ async def update_post(
     post = crud_post.post.update(db, db_obj=post, obj_in=post_in)
     return post
 
+
+@post_router.delete('/post/{post_id}', status_code=200, response_model=Post)
+async def delete_post(
+    *,
+    db: Session = Depends(deps.get_db),
+    post_id,
+    ) -> Any:
+
+    post = crud_post.post.get(db, post_id)
+    if not post:
+        raise HTTPException(
+            status_code=400,
+            detail=f"The post with id {post_id} does not exists in the system.",
+        )
+    
+    post = crud_post.post.remove(db, id=post_id)
+    return post
+
     
 
 
