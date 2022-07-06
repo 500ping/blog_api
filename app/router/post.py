@@ -2,7 +2,7 @@ from typing import Any, List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
-from ..schema.post import (
+from app.schema.post import (
     PostCreate,
     PostUpdate,
     Post
@@ -13,6 +13,7 @@ from app.crud import (
     crud_user,
     crud_tag,
 )
+from app.model import User as UserModel
 
 post_router = APIRouter(prefix="/post")
 
@@ -51,6 +52,7 @@ async def get_post(
 async def create_post(
     *,
     db: Session = Depends(deps.get_db),
+    current_user: UserModel = Depends(deps.get_current_user),
     post_in: PostCreate,
     ) -> Any:
 
@@ -61,7 +63,7 @@ async def create_post(
             detail="The post with this title already exists in the system.",
         )
 
-    post = crud_post.post.create(db, obj_in=post_in)
+    post = crud_post.post.create(db, obj_in=post_in, created_by=current_user.id)
     return post
 
 

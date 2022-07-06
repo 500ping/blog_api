@@ -30,12 +30,12 @@ class CRUDPost(CRUDBase[Post, PostCreate, PostUpdate]):
         db: Session, 
         *, 
         obj_in: PostCreate, 
-        # created_by,
+        created_by,
     ) -> Post:
         obj_in_data = jsonable_encoder(obj_in)
         tag_ids = obj_in_data.pop('tag_ids', []) # Get tag_ids
 
-        db_obj = self.model(**obj_in_data)
+        db_obj = self.model(**obj_in_data, created_by=created_by)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
