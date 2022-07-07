@@ -1,0 +1,21 @@
+# Git
+.git
+.gitignore
+
+# Docker
+.docker
+
+# Python
+**/__pycache__/
+.env/
+.venv/
+venv/
+.vscode/
+.idea/
+
+
+alembic/versions/*
+# exception to the rule
+!alembic/versions/.gitkeep
+
+*.db
