@@ -9,9 +9,7 @@ from app.schema.post import (
 )
 from app.router import deps
 from app.crud import (
-    crud_post, 
-    crud_user,
-    crud_tag,
+    crud_post,
 )
 from app.model import User as UserModel
 
@@ -24,25 +22,42 @@ async def get_posts(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
-    ) -> Any:
+) -> Any:
 
     posts = crud_post.post.get_multi(db, skip=skip, limit=limit)
 
     return posts
 
 
-@post_router.get('/{post_id}', status_code=200, response_model=Post)
-async def get_post(
+# @post_router.get('/{post_id}', status_code=200, response_model=Post)
+# async def get_post(
+#     *,
+#     db: Session = Depends(deps.get_db),
+#     post_id: int
+# ) -> Any:
+
+#     post = crud_post.post.get(db, id=post_id)
+#     if not post:
+#         raise HTTPException(
+#             status_code=400,
+#             detail=f"The post with id {post_id} does not exists in the system.",
+#         )
+
+#     return post
+
+
+@post_router.get('/{slug}', status_code=200, response_model=Post)
+async def get_post_by_slug(
     *,
     db: Session = Depends(deps.get_db),
-    post_id: int
-    ) -> Any:
+    slug: str
+) -> Any:
 
-    post = crud_post.post.get(db, id=post_id)
+    post = crud_post.post.get_by_slug(db, slug=slug)
     if not post:
         raise HTTPException(
             status_code=400,
-            detail=f"The post with id {post_id} does not exists in the system.",
+            detail=f"Post not found!!!",
         )
 
     return post
@@ -54,7 +69,7 @@ async def create_post(
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_user),
     post_in: PostCreate,
-    ) -> Any:
+) -> Any:
 
     post = crud_post.post.get_by_title(db, title=post_in.title)
     if post:
@@ -63,17 +78,19 @@ async def create_post(
             detail="The post with this title already exists in the system.",
         )
 
-    post = crud_post.post.create(db, obj_in=post_in, created_by=current_user.id)
+    post = crud_post.post.create(
+        db, obj_in=post_in, created_by=current_user.id)
     return post
 
 
-@post_router.put('/post/{post_id}', status_code=200, response_model=Post)
+@post_router.put('/{post_id}', status_code=200, response_model=Post)
 async def update_post(
     *,
     db: Session = Depends(deps.get_db),
     post_id,
     post_in: PostUpdate,
-    ) -> Any:
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
 
     post = crud_post.post.get(db, post_id)
 
@@ -82,17 +99,18 @@ async def update_post(
             status_code=400,
             detail=f"The post with id {post_id} does not exists in the system.",
         )
-    
+
     post = crud_post.post.update(db, db_obj=post, obj_in=post_in)
     return post
 
 
-@post_router.delete('/post/{post_id}', status_code=200, response_model=Post)
+@post_router.delete('/{post_id}', status_code=200, response_model=Post)
 async def delete_post(
     *,
     db: Session = Depends(deps.get_db),
     post_id,
-    ) -> Any:
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
 
     post = crud_post.post.get(db, post_id)
     if not post:
@@ -100,19 +118,6 @@ async def delete_post(
             status_code=400,
             detail=f"The post with id {post_id} does not exists in the system.",
         )
-    
+
     post = crud_post.post.remove(db, id=post_id)
     return post
-
-    
-
-
-# @post_router.delete('/post/{id}', status_code=200)
-# async def update_post(id: int):
-#     for i, post in enumerate(POST):
-#         if post['id'] == id:
-#             return POST.pop(i)
-
-#     raise HTTPException(
-#             status_code=404, detail=f"Post {id} not found"
-#         )

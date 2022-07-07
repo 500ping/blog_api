@@ -19,7 +19,7 @@ async def create_user(
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreate,
-    ) -> Any:
+) -> Any:
 
     user = crud_user.user.get_by_email(db, email=user_in.email)
     if user:

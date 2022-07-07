@@ -5,7 +5,7 @@ import bcrypt
 from app.crud.base import CRUDBase
 from app.model.user import User
 from app.schema.user import (
-    UserCreate, 
+    UserCreate,
     UserUpdate,
 )
 
@@ -15,7 +15,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db.query(User).filter(User.email == email).first()
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
-        hashed_password = bcrypt.hashpw(obj_in.password.encode('utf-8'), bcrypt.gensalt())
+        hashed_password = bcrypt.hashpw(
+            obj_in.password.encode('utf-8'), bcrypt.gensalt())
 
         user = User(
             full_name=obj_in.full_name,
@@ -26,5 +27,6 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db.commit()
         db.refresh(user)
         return user
+
 
 user = CRUDUser(User)

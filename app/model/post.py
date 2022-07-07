@@ -25,12 +25,14 @@ class Post(Base):
     created_by = Column(Integer, ForeignKey("user.id"))
     owner = relationship('User', back_populates="posts")
 
-    tags = relationship('Tag', secondary=PostTag.__table__, back_populates='posts')
+    tags = relationship('Tag', secondary=PostTag.__table__,
+                        back_populates='posts')
     tag_ids = association_proxy("tags", "id")
 
     @staticmethod
     def generate_slug(target, value, oldvalue, initiator):
         if value and (not target.slug or value != oldvalue):
             target.slug = slugify(value)
+
 
 event.listen(Post.title, 'set', Post.generate_slug, retval=False)

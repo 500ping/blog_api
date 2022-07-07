@@ -24,6 +24,7 @@ class PostUpdate(PostBase):
 
 class PostInDBBase(PostBase):
     id: Optional[int] = None
+    slug: str
     owner: User
     tags: List[Tag]
 

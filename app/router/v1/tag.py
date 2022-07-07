@@ -11,6 +11,7 @@ from app.router import deps
 from app.crud import (
     crud_tag
 )
+from app.model.user import User as UserModel
 
 tag_router = APIRouter(prefix="/tag")
 
@@ -21,7 +22,7 @@ async def get_tags(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
-    ) -> Any:
+) -> Any:
 
     tags = crud_tag.tag.get_multi(db, skip=skip, limit=limit)
 
@@ -33,7 +34,7 @@ async def get_tag(
     *,
     db: Session = Depends(deps.get_db),
     tag_id: int
-    ) -> Any:
+) -> Any:
 
     tag = crud_tag.tag.get(db, id=tag_id)
     if not tag:
@@ -50,7 +51,8 @@ async def create_tag(
     *,
     db: Session = Depends(deps.get_db),
     tag_in: TagCreate,
-    ) -> Any:
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
 
     tag = crud_tag.tag.get_by_name(db, name=tag_in.name)
     if tag:
@@ -68,8 +70,9 @@ async def update_tag(
     *,
     db: Session = Depends(deps.get_db),
     tag_in: TagUpdate,
-    tag_id: int
-    ) -> Any:
+    tag_id: int,
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
 
     tag = crud_tag.tag.get(db, id=tag_id)
     if not tag:
@@ -86,8 +89,9 @@ async def update_tag(
 async def delete_tag(
     *,
     db: Session = Depends(deps.get_db),
-    tag_id: int
-    ) -> Any:
+    tag_id: int,
+    current_user: UserModel = Depends(deps.get_current_user),
+) -> Any:
 
     tag = crud_tag.tag.get(db, id=tag_id)
     if not tag:

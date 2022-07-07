@@ -18,7 +18,7 @@ from app.settings import (
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-def validate_login(db: Session, email: str, password:str) -> Any:
+def validate_login(db: Session, email: str, password: str) -> Any:
     user = crud_user.user.get_by_email(db=db, email=email)
 
     if not user:
@@ -32,7 +32,7 @@ def validate_login(db: Session, email: str, password:str) -> Any:
             status_code=400,
             detail="Wrong password!!!!"
         )
-    
+
     return user
 
 
@@ -67,4 +67,3 @@ def _create_token(
     payload["iat"] = datetime.utcnow()
     payload["sub"] = str(sub)
     return jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
-    
