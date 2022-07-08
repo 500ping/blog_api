@@ -14,8 +14,9 @@ from app.settings import (
     JWT_SECRET,
     ALGORITHM
 )
+from app.redis.jwt_handle import add_jwt
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def validate_login(db: Session, email: str, password: str) -> Any:
@@ -48,6 +49,9 @@ def create_user_token(email, keep_login) -> UserToken:
         lifetime=timedelta(seconds=REFRESH_TOKEN_EXPIRE),
         sub=email,
     ) if keep_login else ""
+
+    add_jwt(access_token, email, expire=ACCESS_TOKEN_EXPIRE)
+    add_jwt(refresh_token, email, expire=REFRESH_TOKEN_EXPIRE)
 
     return UserToken(
         access_token=access_token,
