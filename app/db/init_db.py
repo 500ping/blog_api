@@ -5,12 +5,9 @@ from getpass import getpass
 from app.crud import crud_user
 from app.schema.user import UserCreate
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 
 def create_user(db: Session) -> None:
-    logger.info('Creating user...')
+    print('Creating user...')
     full_name = input('Enter full name: ')
     email = input('Enter email: ')
     password = getpass('Enter password: ')
@@ -18,11 +15,11 @@ def create_user(db: Session) -> None:
 
     user = crud_user.user.get_by_email(db=db, email=email)
     if user:
-        logger.error('The user with this email already exists in the system!')
+        print('User with this email already exist')
         return
 
     if password != re_password:
-        logger.error('Password does not match!')
+        print('Password does not match')
         return
 
     user_in = UserCreate(
@@ -32,4 +29,4 @@ def create_user(db: Session) -> None:
     )
 
     user = crud_user.user.create(db=db, obj_in=user_in)
-    logger.info('User is created...')
+    print('User created!!!')

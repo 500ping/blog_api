@@ -40,12 +40,12 @@ def validate_login(db: Session, email: str, password: str) -> Any:
 def create_user_token(email, keep_login) -> UserToken:
     access_token = _create_token(
         token_type="access_token",
-        lifetime=timedelta(minutes=ACCESS_TOKEN_EXPIRE),
+        lifetime=timedelta(seconds=ACCESS_TOKEN_EXPIRE),
         sub=email,
     )
     refresh_token = _create_token(
         token_type="access_token",
-        lifetime=timedelta(minutes=REFRESH_TOKEN_EXPIRE),
+        lifetime=timedelta(seconds=REFRESH_TOKEN_EXPIRE),
         sub=email,
     ) if keep_login else ""
 
