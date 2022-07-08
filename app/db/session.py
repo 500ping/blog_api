@@ -8,7 +8,7 @@ connect_args = {}
 
 if settings.DEBUG:
     connect_args['check_same_thread'] = False
-else:
-    engine = create_engine(SQLALCHEMY_DATABASE_URI)
+
+engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args=connect_args)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

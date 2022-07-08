@@ -30,13 +30,6 @@ async def login(
     return authentication.create_user_token(user.email, keep_login)
 
 
-@auth_router.get('/me', response_model=User)
-async def my_profile(
-    current_user: UserModel = Depends(deps.get_current_user)
-) -> User:
-    return current_user
-
-
 @auth_router.post('/refresh', response_model=UserToken)
 async def get_refresh_token(
     *,

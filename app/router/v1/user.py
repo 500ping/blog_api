@@ -10,24 +10,31 @@ from app.router import deps
 from app.crud import (
     crud_user
 )
+from app.model import User as UserModel
 
 user_router = APIRouter(prefix="/user")
 
 
-@user_router.post('/', status_code=201, response_model=User)
-async def create_user(
-    *,
-    db: Session = Depends(deps.get_db),
-    user_in: UserCreate,
-) -> Any:
+@user_router.get('/me', response_model=User)
+async def my_profile(
+    current_user: UserModel = Depends(deps.get_current_user)
+) -> User:
+    return current_user
 
-    user = crud_user.user.get_by_email(db, email=user_in.email)
-    if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this username already exists in the system.",
-        )
 
-    user = crud_user.user.create(db, obj_in=user_in)
+@user_router.get('/me/update', response_model=User)
+async def update_profile(
+    current_user: UserModel = Depends(deps.get_current_user)
+) -> User:
+    return {
+        "message": "Todo later"
+    }
 
-    return user
+
+@user_router.get('/me/change-password', response_model=User)
+async def change_password(
+    current_user: UserModel = Depends(deps.get_current_user)
+) -> User:
+    return {
+        "message": "Todo later"
+    }
