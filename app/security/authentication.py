@@ -27,7 +27,8 @@ def validate_login(db: Session, email: str, password: str) -> Any:
             detail="Email not found!!!!"
         )
 
-    if not bcrypt.checkpw(password.encode('utf-8'), user.hashed_password):
+    hashed_password = user.hashed_password.encode('utf-8')
+    if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
         raise HTTPException(
             status_code=400,
             detail="Wrong password!!!!"

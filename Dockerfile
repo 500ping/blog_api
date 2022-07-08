@@ -11,8 +11,8 @@ EXPOSE 8069
 COPY . /code
 
 RUN apk update \
-    && apk add --virtual build-deps gcc python3-dev musl-dev postgresql-dev \
-    && apk add jpeg-dev zlib-dev libjpeg libffi-dev linux-headers postgresql-client \
+    && apk add --virtual build-deps  musl-dev postgresql-dev \
+    && apk add jpeg-dev zlib-dev libjpeg gcc python3-dev libffi-dev linux-headers postgresql-client \
     && pip install --upgrade pip \
     && pip install -r requirements.txt \
     && apk del build-deps

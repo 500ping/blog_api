@@ -16,7 +16,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         hashed_password = bcrypt.hashpw(
-            obj_in.password.encode('utf-8'), bcrypt.gensalt())
+            obj_in.password.encode('utf-8'), bcrypt.gensalt()).decode()
 
         user = User(
             full_name=obj_in.full_name,
