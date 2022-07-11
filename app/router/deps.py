@@ -9,7 +9,7 @@ from app.security.authentication import oauth2_scheme
 from app.model import User
 from app import settings
 from app.crud import crud_user
-from app.redis.jwt_handle import check_jwt
+from app.cache.jwt_handle import check_jwt
 
 
 def get_db() -> Generator:
@@ -33,7 +33,7 @@ def get_current_user(
         if not check_jwt(token):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="This token has been expried or not exist!!!"
+                detail="This token has been expried or does not exist!!!"
             )
         payload = jwt.decode(
             token,

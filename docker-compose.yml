@@ -12,6 +12,7 @@ services:
       - 8069:8069
     depends_on:
       - db
+      - cache
 
   db:
     image: postgres:14-alpine
@@ -22,5 +23,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 
+  cache:
+    image: redis:6.2-alpine
+    volumes: 
+      - cache:/data
+
 volumes:
   postgres-data:
+  cache:

@@ -11,6 +11,7 @@ from app.schema.auth import (
 )
 from app.schema.user import User
 from app.model.user import User as UserModel
+from app.cache.jwt_handle import delete_jwt
 
 
 auth_router = APIRouter(prefix='/auth')
@@ -36,5 +37,7 @@ async def get_refresh_token(
     db: Session = Depends(deps.get_db),
     request: RefreshRequest
 ) -> Any:
-    user = deps.get_current_user(db, token=request.refresh_token)
-    return authentication.create_user_token(user.email)
+    refresh_token = request.refresh_token
+    user = deps.get_current_user(db, token=refresh_token)
+    delete_jwt(refresh_token)
+    return authentication.create_user_token(user.email, keep_login=True)
