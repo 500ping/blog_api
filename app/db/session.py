@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from app import settings
 
 SQLALCHEMY_DATABASE_URI = settings.SQLALCHEMY_DATABASE_URI
+print(SQLALCHEMY_DATABASE_URI)
 connect_args = {}
 
 if settings.DEBUG:

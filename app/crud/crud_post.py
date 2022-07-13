@@ -1,8 +1,10 @@
-from typing import Optional
+from typing import List, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from fastapi.encoders import jsonable_encoder
 
 from app.model.post import Post
+from app.model.tag import Tag
 from app.schema.post import (
     PostCreate,
     PostUpdate,
@@ -12,6 +14,25 @@ from app.crud import crud_post_tags
 
 
 class CRUDPost(CRUDBase[Post, PostCreate, PostUpdate]):
+    def get_multi(
+            self,
+            db: Session,
+            *,
+            skip: int = 0,
+            limit: int = 100,
+            filter = None,
+            search = None
+    ) -> List[Post]:
+        qs = db.query(Post)
+        if filter:
+            qs = qs.join(Post.tags).filter(Tag.name == filter)
+        if search:
+            search = f"%{search}%"
+            qs = qs.filter(or_(Post.title.ilike(search),
+                               Post.overview.ilike(search)))
+        qs = qs.offset(skip).limit(limit)
+        return qs.all()
+
     def get_by_slug(self, db: Session, *, slug: str) -> Optional[Post]:
         return db.query(Post).filter(Post.slug == slug).first()
 
