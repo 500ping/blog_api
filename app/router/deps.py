@@ -21,8 +21,7 @@ def get_db() -> Generator:
 
 
 def get_current_user(
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
+    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -33,7 +32,7 @@ def get_current_user(
         if not check_jwt(token):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="This token has been expried or does not exist!!!"
+                detail="This token has been expried or does not exist!!!",
             )
         payload = jwt.decode(
             token,

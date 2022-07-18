@@ -11,4 +11,4 @@ class User(Base):
     email = Column(String, unique=True)
     hashed_password = Column(String)
 
-    posts = relationship('Post', back_populates='owner')
+    posts = relationship("Post", back_populates="owner")

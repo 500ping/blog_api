@@ -8,7 +8,7 @@ print(SQLALCHEMY_DATABASE_URI)
 connect_args = {}
 
 if settings.DEBUG:
-    connect_args['check_same_thread'] = False
+    connect_args["check_same_thread"] = False
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args=connect_args)
 

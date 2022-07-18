@@ -3,7 +3,14 @@ from app.model.post_tags import PostTag
 from app.model.tag import Tag
 
 from sqlalchemy import (
-    Column, DateTime, String, Integer, ForeignKey, Text, Boolean, event
+    Column,
+    DateTime,
+    String,
+    Integer,
+    ForeignKey,
+    Text,
+    Boolean,
+    event,
 )
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship, Session
@@ -23,10 +30,9 @@ class Post(Base):
 
     created_on = Column(DateTime(timezone=True), server_default=func.now())
     created_by = Column(Integer, ForeignKey("user.id"))
-    owner = relationship('User', back_populates="posts")
+    owner = relationship("User", back_populates="posts")
 
-    tags = relationship('Tag', secondary=PostTag.__table__,
-                        back_populates='posts')
+    tags = relationship("Tag", secondary=PostTag.__table__, back_populates="posts")
     tag_ids = association_proxy("tags", "id")
 
     @staticmethod
@@ -35,4 +41,4 @@ class Post(Base):
             target.slug = slugify(value)
 
 
-event.listen(Post.title, 'set', Post.generate_slug, retval=False)
+event.listen(Post.title, "set", Post.generate_slug, retval=False)

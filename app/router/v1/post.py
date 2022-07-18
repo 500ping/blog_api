@@ -2,11 +2,7 @@ from typing import Any, List, Union
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 
-from app.schema.post import (
-    PostCreate,
-    PostUpdate,
-    Post
-)
+from app.schema.post import PostCreate, PostUpdate, Post
 from app.router import deps
 from app.crud import (
     crud_post,
@@ -16,17 +12,19 @@ from app.model import User as UserModel
 post_router = APIRouter(prefix="/post")
 
 
-@post_router.get('/', status_code=200, response_model=List[Post])
+@post_router.get("/", status_code=200, response_model=List[Post])
 async def get_posts(
     *,
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
     filter: Union[str, None] = None,
-    search: Union[str, None] = None
+    search: Union[str, None] = None,
 ) -> Any:
 
-    posts = crud_post.post.get_multi(db, skip=skip, limit=limit, search=search, filter=filter)
+    posts = crud_post.post.get_multi(
+        db, skip=skip, limit=limit, search=search, filter=filter
+    )
 
     return posts
 
@@ -48,12 +46,8 @@ async def get_posts(
 #     return post
 
 
-@post_router.get('/{slug}', status_code=200, response_model=Post)
-async def get_post_by_slug(
-    *,
-    db: Session = Depends(deps.get_db),
-    slug: str
-) -> Any:
+@post_router.get("/{slug}", status_code=200, response_model=Post)
+async def get_post_by_slug(*, db: Session = Depends(deps.get_db), slug: str) -> Any:
 
     post = crud_post.post.get_by_slug(db, slug=slug)
     if not post:
@@ -65,7 +59,7 @@ async def get_post_by_slug(
     return post
 
 
-@post_router.post('/', status_code=201, response_model=Post)
+@post_router.post("/", status_code=201, response_model=Post)
 async def create_post(
     *,
     db: Session = Depends(deps.get_db),
@@ -80,12 +74,11 @@ async def create_post(
             detail="The post with this title already exists in the system.",
         )
 
-    post = crud_post.post.create(
-        db, obj_in=post_in, created_by=current_user.id)
+    post = crud_post.post.create(db, obj_in=post_in, created_by=current_user.id)
     return post
 
 
-@post_router.put('/{post_id}', status_code=200, response_model=Post)
+@post_router.put("/{post_id}", status_code=200, response_model=Post)
 async def update_post(
     *,
     db: Session = Depends(deps.get_db),
@@ -106,7 +99,7 @@ async def update_post(
     return post
 
 
-@post_router.delete('/{post_id}', status_code=200, response_model=Post)
+@post_router.delete("/{post_id}", status_code=200, response_model=Post)
 async def delete_post(
     *,
     db: Session = Depends(deps.get_db),
